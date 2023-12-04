@@ -1,0 +1,244 @@
+//Laborator 2 sarcina 1
+#include <iostream>
+#include <string>
+
+class Date { //Se definește clasa "Date" cu câmpurile private zi, luna și an.
+private:
+    int zi;
+    int luna;
+    int an;
+
+public:
+    // Constructor implicit
+    Date() : zi(1), luna(1), an(2000) {}
+
+    // Constructor cu parametri
+    Date(int zi, int luna, int an) : zi(zi), luna(luna), an(an) {}
+
+    // Funcții de setare cu verificare
+    void setZi(int zi) {
+        if (zi >= 1 && zi <= 31) {
+            this->zi = zi;
+        }
+        else {
+            std::cout << "Ziua introdusă nu este validă." << std::endl;
+        }
+    }
+
+    void setLuna(int luna) {
+        if (luna >= 1 && luna <= 12) {
+            this->luna = luna;
+            (*this).luna = lunaș
+        }
+        else {
+            std::cout << "Luna introdusă nu este validă." << std::endl;
+        }
+    }
+
+    void setAn(int an) {
+        this->an = an;
+    }
+
+    // Funcții de returnare
+    int getZi() const {
+        return zi;
+    }
+
+    int getLuna() const {
+        return luna;
+    }
+
+    int getAn() const {
+        return an;
+    }
+
+    // Funcție de afișare "6 iunie 2004"
+    void afisareTip1() const {
+        const std::string luni[] = { "ianuarie", "februarie", "martie", "aprilie", "mai", "iunie", "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie" };
+        std::cout << zi << " " << luni[luna - 1] << " " << an << std::endl;
+    } //afișează data în formatul "6 iunie 2004" utilizând un vector de șiruri pentru numele lunilor.
+
+    // Funcție de afișare "6.06.2004"
+    void afisareTip2() const {
+        printf("%d.%02d.%d\n", zi, luna, an);
+    }
+}; //afișează data în formatul "6.06.2004" utilizând formatarea de șiruri.
+
+int main() {
+    Date data;
+    data.setZi(6);
+    data.setLuna(6);
+    data.setAn(2004);
+
+    std::cout << "Afișare tip 1: ";
+    data.afisareTip1();
+
+    std::cout << "Afișare tip 2: ";
+    data.afisareTip2();
+
+    return 0;
+}
+
+
+//Laborator 2 sarcina 2
+#include <iostream>
+#include <stdexcept>
+
+class Matrix {
+private:
+    int* data;         // Pointer către datele matricei
+    int rows;          // Numărul de rînduri
+    int columns;       // Numărul de coloane
+
+public:
+    // Constructor implicitб nil
+    Matrix() : data(nullptr), rows(0), columns(0) {}
+
+    // Constructor pentru matrice pătrată
+    Matrix(int size) : rows(size), columns(size) {
+        if (size > 0) {
+            data = new int[rows * columns]();
+        }
+    }
+
+    // Constructor pentru matrice dreptunghiulară
+    Matrix(int rows, int columns) : rows(rows), columns(columns) {
+        if (rows > 0 && columns > 0) {
+            data = new int[rows * columns]();
+        }
+    }
+
+    // Destructor
+    ~Matrix() {
+        delete[] data;
+    }
+
+    // Funcție de setare a valorii elementului (i, j)
+    void setValue(int i, int j, int value) {
+        if (i >= 0 && i < rows && j >= 0 && j < columns) {
+            data[i * columns + j] = value;
+        }
+        else {
+            throw std::out_of_range("Indici invalizi.");
+        }
+    }
+
+    // Funcție de returnare a valorii elementului (i, j)
+    int getValue(int i, int j) const {
+        if (i >= 0 && i < rows && j >= 0 && j < columns) {
+            return data[i * columns + j];
+        }
+        else {
+            throw std::out_of_range("Indici invalizi.");
+        }
+    }
+
+    // Funcție pentru adunarea a două matrice
+    Matrix add(const Matrix& other) const {
+        if (rows == other.rows && columns == other.columns) {
+            Matrix result(rows, columns);
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
+                    result.data[i * columns + j] = data[i * columns + j] + other.data[i * columns + j];
+                }
+            }
+            return result;
+        }
+        else {
+            throw std::invalid_argument("Dimensiuni diferite ale matricelor pentru adunare.");
+        }
+    }
+
+    // Funcție pentru scăderea a două matrice
+    Matrix subtract(const Matrix& other) const {
+        if (rows == other.rows && columns == other.columns) {
+            Matrix result(rows, columns);
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
+                    result.data[i * columns + j] = data[i * columns + j] - other.data[i * columns + j];
+                }
+            }
+            return result;
+        }
+        else {
+            throw std::invalid_argument("Dimensiuni diferite ale matricelor pentru scădere.");
+        }
+    }
+
+    // Funcție pentru înmulțirea unei matrice cu alta matrice
+    Matrix multiply(const Matrix& other) const {
+        if (columns == other.rows) {
+            Matrix result(rows, other.columns);
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < other.columns; j++) {
+                    for (int k = 0; k < columns; k++) {
+                        result.data[i * other.columns + j] += data[i * columns + k] * other.data[k * other.columns + j];
+                    }
+                }
+            }
+            return result;
+        }
+        else {
+            throw std::invalid_argument("Dimensiuni incompatibile pentru înmulțire.");
+        }
+    }
+
+    // Funcție pentru înmulțirea unei matrici cu un număr
+    Matrix multiplyByScalar(int scalar) const {
+        Matrix result(rows, columns);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                result.data[i * columns + j] = data[i * columns + j] * scalar;
+            }
+        }
+        return result;
+    }
+
+    // Funcție pentru afișarea matricei
+    void displayMatrix() const {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                std::cout << data[i * columns + j] << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+};
+
+int main() {
+    Matrix matrice1(2, 2);
+    Matrix matrice2(2, 2);
+
+    matrice1.setValue(0, 0, 1);
+    matrice1.setValue(0, 1, 2);
+    matrice1.setValue(1, 0, 3);
+    matrice1.setValue(1, 1, 4);
+
+    matrice2.setValue(0, 0, 5);
+    matrice2.setValue(0, 1, 6);
+    matrice2.setValue(1, 0, 7);
+    matrice2.setValue(1, 1, 8);
+
+    std::cout << "Matrice 1:\n";
+    matrice1.displayMatrix();
+    std::cout << "Matrice 2:\n";
+    matrice2.displayMatrix();
+
+    Matrix suma = matrice1.add(matrice2);
+    std::cout << "Suma matricelor:\n";
+    suma.displayMatrix();
+
+    Matrix diferenta = matrice1.subtract(matrice2);
+    std::cout << "Diferenta matricelor:\n";
+    diferenta.displayMatrix();
+
+    Matrix produs = matrice1.multiply(matrice2);
+    std::cout << "Produsul matricelor:\n";
+    produs.displayMatrix();
+
+    Matrix scalar = matrice1.multiplyByScalar(2);
+    std::cout << "Înmulțirea matricei cu un număr:\n";
+    scalar.displayMatrix();
+
+    return 0;
+}
